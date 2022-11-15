@@ -6,6 +6,11 @@ from .forms import DeviceRegisterForm, UserCreationForm
 from .helpers import generate_device_id, generating_client_key
 from .helpers import required_valid_session
 from .ressponses import Result
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+from .session_cache import set_cache
+
 # Create your views here.
 
 Logger = logging.getLogger("session_auth.web_app.helpers")
@@ -15,6 +20,7 @@ STATUS_INVALID_SESSION_ID = "ERR_INVALID_SESSION_ID"
 
 
 @require_http_methods(['POST'])
+@method_decorator(csrf_exempt, name='dispatch')
 def register_device(request):
     """ View function to load the device info into device tablr. """
 
@@ -46,15 +52,17 @@ def register_device(request):
                 "client_key": session.client_key,
                 "devide_id": session.device.device_id,
             }
-            result = Result(200, STATUS_FAILURE, "successfully registered", extra_fields)
+            result = Result(200, STATUS_SUCCESS, "successfully registered", extra_fields)
             return result.http_response(int(request.POST.get("pretty", 0)))
+    else:
+        return Result(200, STATUS_FAILURE, "Failure", extra_fields={}).http_response(int(request.POST.get("pretty", 0)))
 
 
 @require_http_methods(['POST'])
+@method_decorator(csrf_exempt, name='dispatch')
 @required_valid_session
 def sign_up(request, session):
     """ Handles the User registration."""
-
     if session:
         try:
             if session.user:
@@ -79,30 +87,36 @@ def sign_up(request, session):
 
 
 @require_http_methods(['POST'])
+@method_decorator(csrf_exempt, name='dispatch')
 @required_valid_session
-def sign_in(request, session):
+def sign_in(request, session, key):
     """ Handles the user login. """
-
     if session:
         form = UserCreationForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user =User.objects.get(mobile_no=data['mobile_no'])
+            user = User.objects.get(mobile_no=data['mobile_no'])
             if not session.user and user:
                 # log in
                 session.user = user
                 session.save()
-    return Result(200, STATUS_SUCCESS, "sign_in successfully").http_response()
+                if session.device:
+                    session.device.user = user
+                    session.device.save()
+                set_cache(key, session, from_view=True)
+
+                return Result(200, STATUS_SUCCESS, "sign_in successfully").http_response()
 
 
 @require_http_methods(['POST'])
+@method_decorator(csrf_exempt, name='dispatch')
 @required_valid_session
-def sign_out(request, session):
+def sign_out(request, session, key):
     """ Handles the user logout from our app."""
 
     if session and session.user:
         # log out
         session.user = None
         session.save()
-
-    return Result(200, STATUS_SUCCESS, "successfully logged out").http_response()
+        set_cache(key, session, from_view=True)
+        return Result(200, STATUS_SUCCESS, "successfully logged out").http_response()
