@@ -2,7 +2,7 @@ from django import forms
 
 
 class DeviceRegisterForm(forms.Form):
-    """ Form to hold the payload data of device."""
+    """Form to hold the payload data of device."""
 
     os = forms.CharField(max_length=50)
     os_version = forms.CharField(max_length=50)
@@ -19,4 +19,3 @@ class UserCreationForm(forms.Form):
     mobile_no = forms.CharField(max_length=50)
     password = forms.CharField(max_length=50)
     smc = forms.CharField(max_length=50)
-

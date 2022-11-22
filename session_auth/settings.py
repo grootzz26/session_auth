@@ -94,12 +94,8 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": [
-            "redis://localhost:6379"
-        ],
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000
-        },
+        "LOCATION": ["redis://localhost:6379"],
+        "OPTIONS": {"MAX_ENTRIES": 1000},
     }
 }
 

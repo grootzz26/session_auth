@@ -4,7 +4,7 @@ from django.db import models
 
 
 class User(models.Model):
-    """ This model class holds the data of user. """
+    """This model class holds the data of user."""
 
     name = models.CharField(max_length=50, null=True, blank=True)
     mobile_no = models.CharField(max_length=20, null=True, blank=True)
@@ -16,7 +16,7 @@ class User(models.Model):
 
 
 class Device(models.Model):
-    """ This models holds the details of devices. """
+    """This models holds the details of devices."""
 
     name = models.CharField(max_length=50, null=True, blank=True)
     make = models.CharField(max_length=50, null=True, blank=True)
@@ -31,7 +31,7 @@ class Device(models.Model):
 
 
 class Session(models.Model):
-    """ This model class holds the session details for the client. """
+    """This model class holds the session details for the client."""
 
     api_session = "authentication.session_auth.web_app.api.{}"
 

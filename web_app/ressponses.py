@@ -31,7 +31,7 @@ class Result(object):
         return json.dumps(self.to_json_dict())
 
     def http_response(self, pretty=0, status_code=200):
-        response = HttpResponse(self.to_json(pretty), content_type='application/json')
+        response = HttpResponse(self.to_json(pretty), content_type="application/json")
         response.status_code = status_code
-        response['Access-Control-Allow-Origin'] = '*'
+        response["Access-Control-Allow-Origin"] = "*"
         return response

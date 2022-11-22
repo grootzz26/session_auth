@@ -10,19 +10,19 @@ def default_cache():
 def get_cache(cache_key):
     ecache = default_cache()
     if ecache:
-        ecache = caches['default']
+        ecache = caches["default"]
         return ecache.get(cache_key)
 
 
 def set_cache(key, value, ttl=3600, from_view=False):
     ecache = default_cache()
     if ecache:
-        ecache = caches['default']
+        ecache = caches["default"]
         return ecache.set(key, value, ttl)
 
 
 def get_api_session(request):
-    client_key = request.META.get('HTTP_CLIENTKEY')
+    client_key = request.META.get("HTTP_CLIENTKEY")
     cache_key = Session.api_session.format(client_key)
     session = get_cache(cache_key)
     if session:
